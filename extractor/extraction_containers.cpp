@@ -483,6 +483,23 @@ void ExtractionContainers::WriteEdges(std::ofstream& file_out_stream) const
     auto start_position = file_out_stream.tellp();
     file_out_stream.write((char *)&used_edges_counter_buffer, sizeof(unsigned));
 
+    // A NodeBasedEdge contains these.
+    NodeID source;
+    NodeID target;
+    NodeID name_id;
+    EdgeWeight weight;
+    bool forward;
+    bool backward;
+    bool roundabout;
+    bool access_restricted;
+    bool is_split;
+    TravelMode travel_mode;
+
+    std::ofstream myEdgesTxtFile;
+    myEdgesTxtFile.open("my-edges.txt");
+
+    myEdgesTxtFile << "source target weight forward backward" << std::endl;
+
     for (const auto& edge : all_edges_list)
     {
         if (edge.result.source == SPECIAL_NODEID || edge.result.target == SPECIAL_NODEID)
@@ -494,8 +511,19 @@ void ExtractionContainers::WriteEdges(std::ofstream& file_out_stream) const
         // class of NodeBasedEdgeWithOSM
         NodeBasedEdge tmp = edge.result;
         file_out_stream.write((char*) &tmp, sizeof(NodeBasedEdge));
+
+        source = tmp.source;
+        target = tmp.target;
+        weight = tmp.weight;
+        forward = tmp.forward;
+        backward = tmp.backward;
+
+        myEdgesTxtFile << source << " " << target << " " << weight << " " << forward << " " << backward << std::endl;
+
         used_edges_counter++;
     }
+
+    myEdgesTxtFile.close();
 
     if (used_edges_counter > std::numeric_limits<unsigned>::max())
     {
@@ -530,6 +558,18 @@ void ExtractionContainers::WriteNodes(std::ofstream& file_out_stream) const
     const auto used_node_id_list_end = used_node_id_list.end();
     const auto all_nodes_list_end = all_nodes_list.end();
 
+    // An ExternalMemoryNode contains these.
+    int lat;
+    int lon;
+    uint64_t node_id;
+    bool barrier;
+    bool traffic_lights;
+
+    std::ofstream myNodesTxtFile;
+    myNodesTxtFile.open("my-nodes.txt");
+
+    myNodesTxtFile << "lat lon node_id" << std::endl;
+
     while (node_id_iterator != used_node_id_list_end && node_iterator != all_nodes_list_end)
     {
         if (*node_id_iterator < node_iterator->node_id)
@@ -546,9 +586,18 @@ void ExtractionContainers::WriteNodes(std::ofstream& file_out_stream) const
 
         file_out_stream.write((char *)&(*node_iterator), sizeof(ExternalMemoryNode));
 
+        lat = node_iterator->lat;
+        lon = node_iterator->lon;
+        node_id = (uint64_t) node_iterator->node_id;
+
+        myNodesTxtFile << lat << " " << lon << " " << node_id << std::endl;
+
         ++node_id_iterator;
         ++node_iterator;
     }
+
+    myNodesTxtFile.close();
+
     TIMER_STOP(write_nodes);
     std::cout << "ok, after " << TIMER_SEC(write_nodes) << "s" << std::endl;
 
