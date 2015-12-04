@@ -568,7 +568,7 @@ void ExtractionContainers::WriteNodes(std::ofstream& file_out_stream) const
     std::ofstream myNodesTxtFile;
     myNodesTxtFile.open("my-nodes.txt");
 
-    myNodesTxtFile << "lat lon node_id" << std::endl;
+    myNodesTxtFile << "id lat lon node_id" << std::endl;
 
     while (node_id_iterator != used_node_id_list_end && node_iterator != all_nodes_list_end)
     {
@@ -590,7 +590,7 @@ void ExtractionContainers::WriteNodes(std::ofstream& file_out_stream) const
         lon = node_iterator->lon;
         node_id = (uint64_t) node_iterator->node_id;
 
-        myNodesTxtFile << lat << " " << lon << " " << node_id << std::endl;
+        myNodesTxtFile << external_to_internal_node_id_map.find(node_iterator->node_id)->second << " " << lat << " " << lon << " " << node_id << std::endl;
 
         ++node_id_iterator;
         ++node_iterator;
