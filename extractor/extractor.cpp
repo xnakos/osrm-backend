@@ -590,6 +590,8 @@ void extractor::WriteEdgeBasedGraph(std::string const &output_file_filename,
     const FingerPrint fingerprint = FingerPrint::GetValid();
     file_out_stream.write((char *)&fingerprint, sizeof(FingerPrint));
 
+    SimpleLogger().Write() << "Generating `myEdgeBasedEdges.txt`...";
+
     std::ofstream myEdgeBasedEdgesTxtFile;
     myEdgeBasedEdgesTxtFile.open("myEdgeBasedEdges.txt");
 

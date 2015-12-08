@@ -589,6 +589,20 @@ void EdgeBasedGraphFactory::GenerateEdgeExpandedEdges(
     edge_data_file.close();
 
     SimpleLogger().Write() << "Generated " << m_edge_based_node_list.size() << " edge based nodes";
+
+    SimpleLogger().Write() << "Generating `myEdgeBasedNodes.txt`...";
+
+    std::ofstream myEdgeBasedNodesTxtFile;
+    myEdgeBasedNodesTxtFile.open("myEdgeBasedNodes.txt");
+
+    myEdgeBasedNodesTxtFile << "forward_edge_based_node_id\treverse_edge_based_node_id\tu\tv\tforward_weight\treverse_weight" << std::endl;
+
+    for (const auto& node : m_edge_based_node_list) {
+        myEdgeBasedNodesTxtFile << node.forward_edge_based_node_id << "\t" << node.reverse_edge_based_node_id << "\t" << node.u << "\t" << node.v << "\t" << node.forward_weight << "\t" << node.reverse_weight << std::endl;
+    }
+
+    myEdgeBasedNodesTxtFile.close();
+
     SimpleLogger().Write() << "Node-based graph contains " << node_based_edge_counter << " edges";
     SimpleLogger().Write() << "Edge-expanded graph ...";
     SimpleLogger().Write() << "  contains " << m_edge_based_edge_list.size() << " edges";

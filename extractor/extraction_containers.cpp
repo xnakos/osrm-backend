@@ -495,6 +495,8 @@ void ExtractionContainers::WriteEdges(std::ofstream& file_out_stream) const
     bool is_split;
     TravelMode travel_mode;*/
 
+    SimpleLogger().Write() << "Generating `myEdges.txt`...";
+
     std::ofstream myEdgesTxtFile;
     myEdgesTxtFile.open("myEdges.txt");
 
@@ -565,6 +567,8 @@ void ExtractionContainers::WriteNodes(std::ofstream& file_out_stream) const
     uint64_t node_id;
     /*bool barrier;
     bool traffic_lights;*/
+
+    SimpleLogger().Write() << "Generating `myNodes.txt`...";
 
     std::ofstream myNodesTxtFile;
     myNodesTxtFile.open("myNodes.txt");
