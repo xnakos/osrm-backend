@@ -490,15 +490,15 @@ void ExtractionContainers::WriteEdges(std::ofstream& file_out_stream) const
     EdgeWeight weight;
     bool forward;
     bool backward;
-    bool roundabout;
+    /*bool roundabout;
     bool access_restricted;
     bool is_split;
-    TravelMode travel_mode;
+    TravelMode travel_mode;*/
 
     std::ofstream myEdgesTxtFile;
-    myEdgesTxtFile.open("my-edges.txt");
+    myEdgesTxtFile.open("myEdges.txt");
 
-    myEdgesTxtFile << "source target weight forward backward" << std::endl;
+    myEdgesTxtFile << "source\ttarget\tname_id\tweight\tforward\tbackward" << std::endl;
 
     for (const auto& edge : all_edges_list)
     {
@@ -514,11 +514,12 @@ void ExtractionContainers::WriteEdges(std::ofstream& file_out_stream) const
 
         source = tmp.source;
         target = tmp.target;
+        name_id = tmp.name_id;
         weight = tmp.weight;
         forward = tmp.forward;
         backward = tmp.backward;
 
-        myEdgesTxtFile << source << " " << target << " " << weight << " " << forward << " " << backward << std::endl;
+        myEdgesTxtFile << source << "\t" << target << "\t" << name_id << "\t" << weight << "\t" << forward << "\t" << backward << std::endl;
 
         used_edges_counter++;
     }
@@ -562,13 +563,13 @@ void ExtractionContainers::WriteNodes(std::ofstream& file_out_stream) const
     int lat;
     int lon;
     uint64_t node_id;
-    bool barrier;
-    bool traffic_lights;
+    /*bool barrier;
+    bool traffic_lights;*/
 
     std::ofstream myNodesTxtFile;
-    myNodesTxtFile.open("my-nodes.txt");
+    myNodesTxtFile.open("myNodes.txt");
 
-    myNodesTxtFile << "id lat lon node_id" << std::endl;
+    myNodesTxtFile << "id\tlat\tlon\tnode_id" << std::endl;
 
     while (node_id_iterator != used_node_id_list_end && node_iterator != all_nodes_list_end)
     {
@@ -590,7 +591,7 @@ void ExtractionContainers::WriteNodes(std::ofstream& file_out_stream) const
         lon = node_iterator->lon;
         node_id = (uint64_t) node_iterator->node_id;
 
-        myNodesTxtFile << external_to_internal_node_id_map.find(node_iterator->node_id)->second << " " << lat << " " << lon << " " << node_id << std::endl;
+        myNodesTxtFile << external_to_internal_node_id_map.find(node_iterator->node_id)->second << "\t" << lat << "\t" << lon << "\t" << node_id << std::endl;
 
         ++node_id_iterator;
         ++node_iterator;

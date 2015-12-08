@@ -593,7 +593,7 @@ void extractor::WriteEdgeBasedGraph(std::string const &output_file_filename,
     std::ofstream myEdgeBasedEdgesTxtFile;
     myEdgeBasedEdgesTxtFile.open("myEdgeBasedEdges.txt");
 
-    myEdgeBasedEdgesTxtFile << "source target edge_id weight forward backward" << std::endl;
+    myEdgeBasedEdgesTxtFile << "source\ttarget\tedge_id\tweight\tforward\tbackward" << std::endl;
 
     std::cout << "[extractor] Writing edge-based-graph egdes       ... " << std::flush;
     TIMER_START(write_edges);
@@ -604,7 +604,7 @@ void extractor::WriteEdgeBasedGraph(std::string const &output_file_filename,
 
     for (const auto& edge : edge_based_edge_list) {
         file_out_stream.write((char *) &edge, sizeof(EdgeBasedEdge));
-        myEdgeBasedEdgesTxtFile << edge.source << " " << edge.target << " " << edge.edge_id << " " << edge.weight << " " << edge.forward << " " << edge.backward << std::endl;
+        myEdgeBasedEdgesTxtFile << edge.source << "\t" << edge.target << "\t" << edge.edge_id << "\t" << edge.weight << "\t" << edge.forward << "\t" << edge.backward << std::endl;
     }
 
     TIMER_STOP(write_edges);
