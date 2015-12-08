@@ -590,6 +590,11 @@ void extractor::WriteEdgeBasedGraph(std::string const &output_file_filename,
     const FingerPrint fingerprint = FingerPrint::GetValid();
     file_out_stream.write((char *)&fingerprint, sizeof(FingerPrint));
 
+    std::ofstream myEdgeBasedEdgesTxtFile;
+    myEdgeBasedEdgesTxtFile.open("myEdgeBasedEdges.txt");
+
+    myEdgeBasedEdgesTxtFile << "source target edge_id weight forward backward" << std::endl;
+
     std::cout << "[extractor] Writing edge-based-graph egdes       ... " << std::flush;
     TIMER_START(write_edges);
 
@@ -599,10 +604,13 @@ void extractor::WriteEdgeBasedGraph(std::string const &output_file_filename,
 
     for (const auto& edge : edge_based_edge_list) {
         file_out_stream.write((char *) &edge, sizeof(EdgeBasedEdge));
+        myEdgeBasedEdgesTxtFile << edge.source << " " << edge.target << " " << edge.edge_id << " " << edge.weight << " " << edge.forward << " " << edge.backward;
     }
 
     TIMER_STOP(write_edges);
     std::cout << "ok, after " << TIMER_SEC(write_edges) << "s" << std::endl;
+
+    myEdgeBasedEdgesTxtFile.close();
 
     SimpleLogger().Write() << "Processed " << number_of_used_edges << " edges";
     file_out_stream.close();
