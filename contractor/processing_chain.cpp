@@ -388,6 +388,13 @@ std::size_t Prepare::WriteContractedGraph(unsigned max_node_id,
     SimpleLogger().Write() << "Building edge array";
     int number_of_used_edges = 0;
 
+    SimpleLogger().Write() << "Generating `myContractedEdges.txt`...";
+
+    std::ofstream myContractedEdgesTxtFile;
+    myContractedEdgesTxtFile.open("myContractedEdges.txt");
+
+    myContractedEdgesTxtFile << "source\ttarget\tdistance" << std::endl;
+
     StaticGraph<EdgeData>::EdgeArrayEntry current_edge;
     for (const auto edge : osrm::irange<std::size_t>(0, contracted_edge_list.size()))
     {
@@ -415,8 +422,12 @@ std::size_t Prepare::WriteContractedGraph(unsigned max_node_id,
         hsgr_output_stream.write((char *)&current_edge,
                                  sizeof(StaticGraph<EdgeData>::EdgeArrayEntry));
 
+        myContractedEdgesTxtFile << contracted_edge_list[edge].source << "\t" << contracted_edge_list[edge].target << "\t" << current_edge.data.distance << std::endl;
+
         ++number_of_used_edges;
     }
+
+    myContractedEdgesTxtFile.close();
 
     return number_of_used_edges;
 }
