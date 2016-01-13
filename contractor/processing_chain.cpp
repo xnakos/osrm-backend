@@ -287,8 +287,21 @@ void Prepare::WriteNodeLevels(std::vector<float> &&in_node_levels) const
     boost::filesystem::ofstream order_output_stream(config.level_output_path, std::ios::binary);
 
     unsigned level_size = node_levels.size();
+
+    SimpleLogger().Write() << "Generating `myNodeLevels.txt`...";
+
+    std::ofstream myNodeLevelsTxtFile;
+    myNodeLevelsTxtFile.open("myNodeLevels.txt");
+
+    myNodeLevelsTxtFile << "level" << std::endl;
+
     order_output_stream.write((char *)&level_size, sizeof(unsigned));
     order_output_stream.write((char *)node_levels.data(), sizeof(float) * node_levels.size());
+
+    for (unsigned i = 0; i < level_size; i++)
+        myNodeLevelsTxtFile << node_levels[i] << std::endl;
+
+    myNodeLevelsTxtFile.close();
 }
 
 void Prepare::WriteCoreNodeMarker(std::vector<bool> &&in_is_core_node) const
