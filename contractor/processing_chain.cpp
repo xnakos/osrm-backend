@@ -435,7 +435,7 @@ std::size_t Prepare::WriteContractedGraph(unsigned max_node_id,
         hsgr_output_stream.write((char *)&current_edge,
                                  sizeof(StaticGraph<EdgeData>::EdgeArrayEntry));
 
-        myContractedEdgesTxtFile << contracted_edge_list[edge].source << "\t" << contracted_edge_list[edge].target << "\t" << current_edge.data.distance << "\t" << current_edge.data.shortcut << "\t" << current_edge.data.forward << "\t" << current_edge.data.backward << std::endl;
+        myContractedEdgesTxtFile << contracted_edge_list[edge].source << "\t" << contracted_edge_list[edge].target << "\t" << current_edge.data.distance << "\t" << (current_edge.data.shortcut == 1 ? 't' : 'f') << "\t" << (current_edge.data.forward == 1 ? 't' : 'f') << "\t" << (current_edge.data.backward == 1 ? 't' : 'f') << std::endl;
 
         ++number_of_used_edges;
     }
