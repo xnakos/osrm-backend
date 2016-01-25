@@ -150,7 +150,7 @@ void ExtractionContainers::WriteNames(const std::string& names_file_name) const
     myNamesTxtFile << "name_id\tname\thighway" << std::endl;
 
     int name_list_size = name_list.size();
-    for (int i = 1; i < name_list_size; i++)
+    for (int i = 0; i < name_list_size; i++)
         myNamesTxtFile << i << "\t" << name_list[i] << "\t" << highway_list[i] << std::endl;
 
     myNamesTxtFile.close();
