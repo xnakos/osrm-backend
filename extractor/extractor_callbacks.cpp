@@ -157,6 +157,7 @@ void ExtractorCallbacks::ProcessWay(const osmium::Way &input_way, const Extracti
     if (string_map.end() == string_map_iterator)
     {
         external_memory.name_list.push_back(parsed_way.name);
+        external_memory.highway_list.push_back(parsed_way.highway);
         string_map.insert(std::make_pair(parsed_way.name, name_id));
     }
     else

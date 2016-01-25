@@ -72,6 +72,7 @@ class ExtractionContainers
     STXXLNodeVector all_nodes_list;
     STXXLEdgeVector all_edges_list;
     STXXLStringVector name_list;
+    STXXLStringVector highway_list;
     STXXLRestrictionsVector restrictions_list;
     STXXLWayIDStartEndVector way_start_end_id_list;
     std::unordered_map<OSMNodeID, NodeID> external_to_internal_node_id_map;

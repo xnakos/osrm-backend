@@ -210,6 +210,7 @@ end
 
 function way_function (way, result)
   local highway = way:get_value_by_key("highway")
+  result.highway = highway
   local route = way:get_value_by_key("route")
   local bridge = way:get_value_by_key("bridge")
 

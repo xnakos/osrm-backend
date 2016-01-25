@@ -110,6 +110,7 @@ end
 function way_function (way, result)
   -- initial routability check, filters out buildings, boundaries, etc
   local highway = way:get_value_by_key("highway")
+  result.highway = highway
   local leisure = way:get_value_by_key("leisure")
   local route = way:get_value_by_key("route")
   local man_made = way:get_value_by_key("man_made")

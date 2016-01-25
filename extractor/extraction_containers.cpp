@@ -56,6 +56,7 @@ ExtractionContainers::ExtractionContainers()
     // Check if stxxl can be instantiated
     stxxl::vector<unsigned> dummy_vector;
     name_list.push_back("");
+    highway_list.push_back("");
 }
 
 ExtractionContainers::~ExtractionContainers()
@@ -65,6 +66,7 @@ ExtractionContainers::~ExtractionContainers()
     all_nodes_list.clear();
     all_edges_list.clear();
     name_list.clear();
+    highway_list.clear();
     restrictions_list.clear();
     way_start_end_id_list.clear();
 }
@@ -139,6 +141,20 @@ void ExtractionContainers::WriteNames(const std::string& names_file_name) const
     }
 
     name_file_stream.close();
+
+    SimpleLogger().Write() << "Generating `myNames.txt`...";
+
+    std::ofstream myNamesTxtFile;
+    myNamesTxtFile.open("myNames.txt");
+
+    myNamesTxtFile << "name_id\tname\thighway" << std::endl;
+
+    int name_list_size = name_list.size();
+    for (int i = 1; i < name_list_size; i++)
+        myNamesTxtFile << i << "\t" << name_list[i] << "\t" << highway_list[i] << std::endl;
+
+    myNamesTxtFile.close();
+
     TIMER_STOP(write_name_index);
     std::cout << "ok, after " << TIMER_SEC(write_name_index) << "s" << std::endl;
 }
