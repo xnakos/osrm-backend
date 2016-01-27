@@ -147,13 +147,26 @@ void ExtractionContainers::WriteNames(const std::string& names_file_name) const
     std::ofstream myNamesTxtFile;
     myNamesTxtFile.open("myNames.txt");
 
-    myNamesTxtFile << "name_id\tname\thighway" << std::endl;
+    myNamesTxtFile << "name_id\tname" << std::endl;
 
     int name_list_size = name_list.size();
     for (int i = 0; i < name_list_size; i++)
-        myNamesTxtFile << i << "\t" << name_list[i] << "\t" << highway_list[i] << std::endl;
+        myNamesTxtFile << i << "\t" << name_list[i] << std::endl;
 
     myNamesTxtFile.close();
+
+    SimpleLogger().Write() << "Generating `myHighways.txt`...";
+
+    std::ofstream myHighwaysTxtFile;
+    myHighwaysTxtFile.open("myHighways.txt");
+
+    myHighwaysTxtFile << "highway_id\thighway" << std::endl;
+
+    int highway_list_size = highway_list.size();
+    for (int i = 0; i < highway_list_size; i++)
+        myHighwaysTxtFile << i << "\t" << highway_list[i] << std::endl;
+
+    myHighwaysTxtFile.close();
 
     TIMER_STOP(write_name_index);
     std::cout << "ok, after " << TIMER_SEC(write_name_index) << "s" << std::endl;
@@ -516,7 +529,7 @@ void ExtractionContainers::WriteEdges(std::ofstream& file_out_stream) const
     std::ofstream myEdgesTxtFile;
     myEdgesTxtFile.open("myEdges.txt");
 
-    myEdgesTxtFile << "source\ttarget\tname_id\tweight\tforward\tbackward" << std::endl;
+    myEdgesTxtFile << "source\ttarget\tname_id\thighway_id\tweight\tforward\tbackward" << std::endl;
 
     for (const auto& edge : all_edges_list)
     {
@@ -537,7 +550,7 @@ void ExtractionContainers::WriteEdges(std::ofstream& file_out_stream) const
         forward = tmp.forward;
         backward = tmp.backward;
 
-        myEdgesTxtFile << source << "\t" << target << "\t" << name_id << "\t" << weight << "\t" << forward << "\t" << backward << std::endl;
+        myEdgesTxtFile << source << "\t" << target << "\t" << name_id << "\t" << edge.weight_data.highway_id << "\t" << weight << "\t" << forward << "\t" << backward << std::endl;
 
         used_edges_counter++;
     }

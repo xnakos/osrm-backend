@@ -50,7 +50,7 @@ struct InternalExtractorEdge
     struct WeightData
     {
 
-        WeightData() : duration(0.0), type(WeightType::INVALID)
+        WeightData() : duration(0.0), type(WeightType::INVALID), highway_id(0)
         {
         }
 
@@ -60,6 +60,7 @@ struct InternalExtractorEdge
             double speed;
         };
         WeightType type;
+        unsigned highway_id;
     };
 
     explicit InternalExtractorEdge()

@@ -49,6 +49,7 @@ ExtractorCallbacks::ExtractorCallbacks(ExtractionContainers &extraction_containe
     : external_memory(extraction_containers)
 {
     string_map[""] = 0;
+    highway_map[""] = 0;
 }
 
 /**
@@ -116,6 +117,22 @@ void ExtractorCallbacks::ProcessWay(const osmium::Way &input_way, const Extracti
     InternalExtractorEdge::WeightData forward_weight_data;
     InternalExtractorEdge::WeightData backward_weight_data;
 
+    // Get the unique identifier for the highway value
+    const auto &highway_map_iterator = highway_map.find(parsed_way.highway);
+    unsigned highway_id = external_memory.highway_list.size();
+    if (highway_map.end() == highway_map_iterator)
+    {
+        external_memory.highway_list.push_back(parsed_way.highway);
+        highway_map.insert(std::make_pair(parsed_way.highway, highway_id));
+    }
+    else
+    {
+        highway_id = highway_map_iterator->second;
+    }
+
+    forward_weight_data.highway_id = highway_id;
+    backward_weight_data.highway_id = highway_id;
+
     if (0 < parsed_way.duration)
     {
         const unsigned num_edges = (input_way.nodes().size() - 1);
@@ -157,7 +174,6 @@ void ExtractorCallbacks::ProcessWay(const osmium::Way &input_way, const Extracti
     if (string_map.end() == string_map_iterator)
     {
         external_memory.name_list.push_back(parsed_way.name);
-        external_memory.highway_list.push_back(parsed_way.highway);
         string_map.insert(std::make_pair(parsed_way.name, name_id));
     }
     else
