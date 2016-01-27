@@ -144,29 +144,29 @@ void ExtractionContainers::WriteNames(const std::string& names_file_name) const
 
     SimpleLogger().Write() << "Generating `myNames.txt`...";
 
-    std::ofstream myNamesTxtFile;
-    myNamesTxtFile.open("myNames.txt");
+    std::ofstream myNames;
+    myNames.open("myNames.txt");
 
-    myNamesTxtFile << "name_id\tname" << std::endl;
+    myNames << "name_id\tname" << std::endl;
 
     int name_list_size = name_list.size();
     for (int i = 0; i < name_list_size; i++)
-        myNamesTxtFile << i << "\t" << name_list[i] << std::endl;
+        myNames << i << "\t" << name_list[i] << std::endl;
 
-    myNamesTxtFile.close();
+    myNames.close();
 
     SimpleLogger().Write() << "Generating `myHighways.txt`...";
 
-    std::ofstream myHighwaysTxtFile;
-    myHighwaysTxtFile.open("myHighways.txt");
+    std::ofstream myHighways;
+    myHighways.open("myHighways.txt");
 
-    myHighwaysTxtFile << "highway_id\thighway" << std::endl;
+    myHighways << "highway_id\thighway" << std::endl;
 
     int highway_list_size = highway_list.size();
     for (int i = 0; i < highway_list_size; i++)
-        myHighwaysTxtFile << i << "\t" << highway_list[i] << std::endl;
+        myHighways << i << "\t" << highway_list[i] << std::endl;
 
-    myHighwaysTxtFile.close();
+    myHighways.close();
 
     TIMER_STOP(write_name_index);
     std::cout << "ok, after " << TIMER_SEC(write_name_index) << "s" << std::endl;
@@ -524,12 +524,12 @@ void ExtractionContainers::WriteEdges(std::ofstream& file_out_stream) const
     bool is_split;
     TravelMode travel_mode;*/
 
-    SimpleLogger().Write() << "Generating `myEdges.txt`...";
+    SimpleLogger().Write() << "Generating `myNodeBasedEdges.txt`...";
 
-    std::ofstream myEdgesTxtFile;
-    myEdgesTxtFile.open("myEdges.txt");
+    std::ofstream myNodeBasedEdges;
+    myNodeBasedEdges.open("myNodeBasedEdges.txt");
 
-    myEdgesTxtFile << "source\ttarget\tname_id\thighway_id\tweight\tforward\tbackward" << std::endl;
+    myNodeBasedEdges << "source\ttarget\tname_id\thighway_id\tweight\tforward\tbackward" << std::endl;
 
     for (const auto& edge : all_edges_list)
     {
@@ -550,12 +550,12 @@ void ExtractionContainers::WriteEdges(std::ofstream& file_out_stream) const
         forward = tmp.forward;
         backward = tmp.backward;
 
-        myEdgesTxtFile << source << "\t" << target << "\t" << name_id << "\t" << edge.weight_data.highway_id << "\t" << weight << "\t" << forward << "\t" << backward << std::endl;
+        myNodeBasedEdges << source << "\t" << target << "\t" << name_id << "\t" << edge.weight_data.highway_id << "\t" << weight << "\t" << forward << "\t" << backward << std::endl;
 
         used_edges_counter++;
     }
 
-    myEdgesTxtFile.close();
+    myNodeBasedEdges.close();
 
     if (used_edges_counter > std::numeric_limits<unsigned>::max())
     {
@@ -597,12 +597,12 @@ void ExtractionContainers::WriteNodes(std::ofstream& file_out_stream) const
     /*bool barrier;
     bool traffic_lights;*/
 
-    SimpleLogger().Write() << "Generating `myNodes.txt`...";
+    SimpleLogger().Write() << "Generating `myNodeBasedNodes.txt`...";
 
-    std::ofstream myNodesTxtFile;
-    myNodesTxtFile.open("myNodes.txt");
+    std::ofstream myNodeBasedNodes;
+    myNodeBasedNodes.open("myNodeBasedNodes.txt");
 
-    myNodesTxtFile << "id\tlat\tlon\tnode_id" << std::endl;
+    myNodeBasedNodes << "id\tlat\tlon\tosm_id" << std::endl;
 
     while (node_id_iterator != used_node_id_list_end && node_iterator != all_nodes_list_end)
     {
@@ -624,13 +624,13 @@ void ExtractionContainers::WriteNodes(std::ofstream& file_out_stream) const
         lon = node_iterator->lon;
         node_id = (uint64_t) node_iterator->node_id;
 
-        myNodesTxtFile << external_to_internal_node_id_map.find(node_iterator->node_id)->second << "\t" << lat << "\t" << lon << "\t" << node_id << std::endl;
+        myNodeBasedNodes << external_to_internal_node_id_map.find(node_iterator->node_id)->second << "\t" << lat << "\t" << lon << "\t" << node_id << std::endl;
 
         ++node_id_iterator;
         ++node_iterator;
     }
 
-    myNodesTxtFile.close();
+    myNodeBasedNodes.close();
 
     TIMER_STOP(write_nodes);
     std::cout << "ok, after " << TIMER_SEC(write_nodes) << "s" << std::endl;
