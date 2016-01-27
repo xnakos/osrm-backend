@@ -592,10 +592,10 @@ void extractor::WriteEdgeBasedGraph(std::string const &output_file_filename,
 
     SimpleLogger().Write() << "Generating `myEdgeBasedEdges.txt`...";
 
-    std::ofstream myEdgeBasedEdgesTxtFile;
-    myEdgeBasedEdgesTxtFile.open("myEdgeBasedEdges.txt");
+    std::ofstream myEdgeBasedEdges;
+    myEdgeBasedEdges.open("myEdgeBasedEdges.txt");
 
-    myEdgeBasedEdgesTxtFile << "source\ttarget\tedge_id\tweight\tforward\tbackward" << std::endl;
+    myEdgeBasedEdges << "source\ttarget\tedge_id\tweight\tforward\tbackward" << std::endl;
 
     std::cout << "[extractor] Writing edge-based-graph egdes       ... " << std::flush;
     TIMER_START(write_edges);
@@ -606,13 +606,13 @@ void extractor::WriteEdgeBasedGraph(std::string const &output_file_filename,
 
     for (const auto& edge : edge_based_edge_list) {
         file_out_stream.write((char *) &edge, sizeof(EdgeBasedEdge));
-        myEdgeBasedEdgesTxtFile << edge.source << "\t" << edge.target << "\t" << edge.edge_id << "\t" << edge.weight << "\t" << edge.forward << "\t" << edge.backward << std::endl;
+        myEdgeBasedEdges << edge.source << "\t" << edge.target << "\t" << edge.edge_id << "\t" << edge.weight << "\t" << edge.forward << "\t" << edge.backward << std::endl;
     }
 
     TIMER_STOP(write_edges);
     std::cout << "ok, after " << TIMER_SEC(write_edges) << "s" << std::endl;
 
-    myEdgeBasedEdgesTxtFile.close();
+    myEdgeBasedEdges.close();
 
     SimpleLogger().Write() << "Processed " << number_of_used_edges << " edges";
     file_out_stream.close();

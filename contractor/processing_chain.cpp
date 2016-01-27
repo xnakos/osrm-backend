@@ -280,28 +280,57 @@ void Prepare::ReadNodeLevels(std::vector<float> &node_levels) const
     order_input_stream.read((char *)node_levels.data(), sizeof(float) * node_levels.size());
 }
 
+// This is used to order by first (level) descending, then by second (id) ascending.
+bool myNodeCompare(const std::pair<unsigned, unsigned> &i, const std::pair<unsigned, unsigned> &j)
+{
+    if (i.first == j.first)
+        return i.second < j.second;
+    else
+        return i.first > j.first;
+}
+
 void Prepare::WriteNodeLevels(std::vector<float> &&in_node_levels) const
 {
     std::vector<float> node_levels(std::move(in_node_levels));
+
+    // Vector of pairs (level, id).
+    std::vector<std::pair<unsigned, unsigned>> myNodeLevels;
 
     boost::filesystem::ofstream order_output_stream(config.level_output_path, std::ios::binary);
 
     unsigned level_size = node_levels.size();
 
-    SimpleLogger().Write() << "Generating `myNodeLevels.txt`...";
+    SimpleLogger().Write() << "Generating `myEdgeBasedNodeLevels.txt`...";
 
-    std::ofstream myNodeLevelsTxtFile;
-    myNodeLevelsTxtFile.open("myNodeLevels.txt");
+    std::ofstream myEdgeBasedNodeLevels;
+    myEdgeBasedNodeLevels.open("myEdgeBasedNodeLevels.txt");
 
-    myNodeLevelsTxtFile << "node_id\tlevel" << std::endl;
+    myEdgeBasedNodeLevels << "node_id\tlevel" << std::endl;
 
     order_output_stream.write((char *)&level_size, sizeof(unsigned));
     order_output_stream.write((char *)node_levels.data(), sizeof(float) * node_levels.size());
 
-    for (unsigned i = 0; i < level_size; i++)
-        myNodeLevelsTxtFile << i << "\t" << node_levels[i] << std::endl;
+    for (unsigned i = 0; i < level_size; i++) {
+        myEdgeBasedNodeLevels << i << "\t" << node_levels[i] << std::endl;
+        myNodeLevels.push_back(std::make_pair((unsigned) (node_levels[i] + 0.5), i));
+    }
 
-    myNodeLevelsTxtFile.close();
+    myEdgeBasedNodeLevels.close();
+
+    std::sort(myNodeLevels.begin(), myNodeLevels.end(), myNodeCompare);
+
+    SimpleLogger().Write() << "Generating `myEdgeBasedNodeOrder.order`...";
+
+    std::ofstream myEdgeBasedNodeOrder;
+    myEdgeBasedNodeOrder.open("myEdgeBasedNodeOrder.order");
+
+    myEdgeBasedNodeOrder << "node_id" << std::endl;
+
+    for(auto const& myNodeLevel: myNodeLevels) {
+        myEdgeBasedNodeOrder << myNodeLevel.second << std::endl;
+    }
+
+    myEdgeBasedNodeOrder.close();
 }
 
 void Prepare::WriteCoreNodeMarker(std::vector<bool> &&in_is_core_node) const
@@ -401,12 +430,12 @@ std::size_t Prepare::WriteContractedGraph(unsigned max_node_id,
     SimpleLogger().Write() << "Building edge array";
     int number_of_used_edges = 0;
 
-    SimpleLogger().Write() << "Generating `myContractedEdges.txt`...";
+    SimpleLogger().Write() << "Generating `myEdgeBasedContractedEdges.txt`...";
 
-    std::ofstream myContractedEdgesTxtFile;
-    myContractedEdgesTxtFile.open("myContractedEdges.txt");
+    std::ofstream myEdgeBasedContractedEdges;
+    myEdgeBasedContractedEdges.open("myEdgeBasedContractedEdges.txt");
 
-    myContractedEdgesTxtFile << "source\ttarget\tdistance\tis_shortcut\tforward\tbackward" << std::endl;
+    myEdgeBasedContractedEdges << "source\ttarget\tdistance\tis_shortcut\tforward\tbackward" << std::endl;
 
     StaticGraph<EdgeData>::EdgeArrayEntry current_edge;
     for (const auto edge : osrm::irange<std::size_t>(0, contracted_edge_list.size()))
@@ -435,12 +464,12 @@ std::size_t Prepare::WriteContractedGraph(unsigned max_node_id,
         hsgr_output_stream.write((char *)&current_edge,
                                  sizeof(StaticGraph<EdgeData>::EdgeArrayEntry));
 
-        myContractedEdgesTxtFile << contracted_edge_list[edge].source << "\t" << contracted_edge_list[edge].target << "\t" << current_edge.data.distance << "\t" << (current_edge.data.shortcut == 1 ? 't' : 'f') << "\t" << (current_edge.data.forward == 1 ? 't' : 'f') << "\t" << (current_edge.data.backward == 1 ? 't' : 'f') << std::endl;
+        myEdgeBasedContractedEdges << contracted_edge_list[edge].source << "\t" << contracted_edge_list[edge].target << "\t" << current_edge.data.distance << "\t" << (current_edge.data.shortcut == 1 ? 't' : 'f') << "\t" << (current_edge.data.forward == 1 ? 't' : 'f') << "\t" << (current_edge.data.backward == 1 ? 't' : 'f') << std::endl;
 
         ++number_of_used_edges;
     }
 
-    myContractedEdgesTxtFile.close();
+    myEdgeBasedContractedEdges.close();
 
     return number_of_used_edges;
 }
