@@ -324,7 +324,8 @@ void Prepare::WriteNodeLevels(std::vector<float> &&in_node_levels) const
     std::ofstream myEdgeBasedNodeOrder;
     myEdgeBasedNodeOrder.open("myEdgeBasedNodeOrder.order");
 
-    myEdgeBasedNodeOrder << "node_id" << std::endl;
+    // Number of nodes.
+    myEdgeBasedNodeOrder << myNodeLevels.size() << std::endl;
 
     for(auto const& myNodeLevel: myNodeLevels) {
         myEdgeBasedNodeOrder << myNodeLevel.second << std::endl;
@@ -430,6 +431,8 @@ std::size_t Prepare::WriteContractedGraph(unsigned max_node_id,
     SimpleLogger().Write() << "Building edge array";
     int number_of_used_edges = 0;
 
+    std::map<std::pair<unsigned, unsigned>, int> myContractedEdgeMap;
+
     SimpleLogger().Write() << "Generating `myEdgeBasedContractedEdges.txt`...";
 
     std::ofstream myEdgeBasedContractedEdges;
@@ -465,11 +468,29 @@ std::size_t Prepare::WriteContractedGraph(unsigned max_node_id,
                                  sizeof(StaticGraph<EdgeData>::EdgeArrayEntry));
 
         myEdgeBasedContractedEdges << contracted_edge_list[edge].source << "\t" << contracted_edge_list[edge].target << "\t" << current_edge.data.distance << "\t" << (current_edge.data.shortcut == 1 ? 't' : 'f') << "\t" << (current_edge.data.forward == 1 ? 't' : 'f') << "\t" << (current_edge.data.backward == 1 ? 't' : 'f') << std::endl;
+        if (current_edge.data.forward == 1)
+            myContractedEdgeMap.insert(std::make_pair(std::make_pair(contracted_edge_list[edge].source, contracted_edge_list[edge].target), (int) current_edge.data.distance));
+        if (current_edge.data.backward == 1)
+            myContractedEdgeMap.insert(std::make_pair(std::make_pair(contracted_edge_list[edge].target, contracted_edge_list[edge].source), (int) current_edge.data.distance));
 
         ++number_of_used_edges;
     }
 
     myEdgeBasedContractedEdges.close();
+
+    SimpleLogger().Write() << "Generating `myEdgeBasedSimpleContractedEdges.gr`...";
+
+    std::ofstream myEdgeBasedSimpleContractedEdges;
+    myEdgeBasedSimpleContractedEdges.open("myEdgeBasedSimpleContractedEdges.gr");
+
+    myEdgeBasedSimpleContractedEdges << "p sp " << (max_used_node_id + 1) << " " << myContractedEdgeMap.size() << std::endl;
+
+    for (std::map<std::pair<unsigned, unsigned>, int>::iterator it = myContractedEdgeMap.begin(); it != myContractedEdgeMap.end(); it++)
+    {
+        myEdgeBasedSimpleContractedEdges << "a " << (it->first.first + 1) << " " << (it->first.second + 1) << " " << it->second << std::endl;
+    }
+
+    myEdgeBasedSimpleContractedEdges.close();
 
     return number_of_used_edges;
 }
